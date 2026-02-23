@@ -7,7 +7,7 @@ public final class LocalPart {
 
     private final String value;
 
-    private LocalPart(String value) {
+    LocalPart(String value) {
         this.value = value;
     }
 

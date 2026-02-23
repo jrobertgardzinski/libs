@@ -1,5 +1,8 @@
 package com.jrobertgardzinski.email.domain;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.util.Objects;
 
 /**
@@ -13,49 +16,19 @@ import java.util.Objects;
  * disposable-address detection) live in email-specifications.
  * System decisions (can register, is employee) live in email-usecases.
  */
+@ToString
+@EqualsAndHashCode
 public final class Email {
 
     private final LocalPart local;
     private final DomainPart domain;
 
-    private Email(LocalPart local, DomainPart domain) {
+    Email(LocalPart local, DomainPart domain) {
         this.local  = local;
         this.domain = domain;
     }
 
-    public static Email of(String raw) {
-        if (raw == null || raw.isBlank()) {
-            throw new IllegalArgumentException("Email must not be blank");
-        }
-        int at = raw.indexOf('@');
-        if (at < 0) {
-            throw new IllegalArgumentException("Email must contain '@': " + raw);
-        }
-        if (raw.indexOf('@', at + 1) >= 0) {
-            throw new IllegalArgumentException("Email must contain exactly one '@': " + raw);
-        }
-        return new Email(
-                LocalPart.of(raw.substring(0, at)),
-                DomainPart.of(raw.substring(at + 1))
-        );
-    }
-
     public LocalPart local()   { return local;  }
     public DomainPart domain() { return domain; }
-
-    /** Derived canonical form: local + "@" + domain */
     public String value() { return local + "@" + domain; }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Email other)) return false;
-        return local.equals(other.local) && domain.equals(other.domain);
-    }
-
-    @Override
-    public int hashCode() { return Objects.hash(local, domain); }
-
-    @Override
-    public String toString() { return value(); }
 }

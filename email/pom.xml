@@ -6,12 +6,16 @@
     <parent>
         <groupId>com.jrobertgardzinski</groupId>
         <artifactId>libs-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>email</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.jrobertgardzinski</groupId>
             <artifactId>bdd-test-starter</artifactId>
