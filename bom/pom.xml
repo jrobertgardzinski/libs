@@ -15,7 +15,17 @@
         <dependencies>
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
-                <artifactId>email</artifactId>
+                <artifactId>lib-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jrobertgardzinski</groupId>
+                <artifactId>email-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jrobertgardzinski</groupId>
+                <artifactId>email-details</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

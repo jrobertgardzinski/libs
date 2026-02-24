@@ -11,7 +11,9 @@
 
     <modules>
         <module>bom</module>
-        <module>email</module>
+        <module>lib-util</module>
+        <module>email-api</module>
+        <module>email-details</module>
         <module>password</module>
         <module>token</module>
         <module>hash-algorithms</module>
@@ -29,7 +31,12 @@
             <!-- internal -->
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
-                <artifactId>email</artifactId>
+                <artifactId>email-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jrobertgardzinski</groupId>
+                <artifactId>email-details</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -45,6 +52,12 @@
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
                 <artifactId>argon2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.jrobertgardzinski</groupId>
+                <artifactId>lib-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
