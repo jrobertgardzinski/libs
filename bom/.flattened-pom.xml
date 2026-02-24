@@ -19,12 +19,7 @@
       </dependency>
       <dependency>
         <groupId>com.jrobertgardzinski</groupId>
-        <artifactId>email-api</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.jrobertgardzinski</groupId>
-        <artifactId>email-details</artifactId>
+        <artifactId>email</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
