@@ -5,7 +5,7 @@ public abstract class Constraint<T> implements Specification<T> {
     public abstract boolean isSatisfied(T candidate);
     public abstract String errorMessage();
 
-    final public ValidationResult validate(T candidate) {
+    public ValidationResult validate(T candidate) {
         return isSatisfied(candidate) ?
                     ValidationResult.ok() :
                     ValidationResult.failure(errorMessage());

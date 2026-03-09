@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.policy;
+package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
 import com.jrobertgardzinski.util.Constraint;
@@ -20,6 +20,6 @@ class _BlockedDomainConstraint extends Constraint<Email> {
 
     @Override
     public String errorMessage() {
-        return "on the blocked domain list: " + blockedDomains;
+        return "On the blocked domain list.";
     }
 }

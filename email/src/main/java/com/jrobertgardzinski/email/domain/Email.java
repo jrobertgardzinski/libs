@@ -16,8 +16,8 @@ import java.util.Objects;
  */
 public final class Email {
 
-    private static final List<_EmailNormalization>
-            normalizationPolicies = List.of(new _GmailNormalization());
+    public static final List<_EmailNormalization>
+            DEFAULT_NORMALIZATION_POLICIES = List.of(new _GmailNormalization());
 
     private final LocalPart local;
     private final LocalPart normalized;
@@ -30,6 +30,10 @@ public final class Email {
     }
 
     public static Email of(String raw) {
+        return of(raw, DEFAULT_NORMALIZATION_POLICIES);
+    }
+
+    public static Email of(String raw, List<_EmailNormalization> normalizationPolicies) {
         if (raw == null || raw.isBlank()) {
             throw new IllegalArgumentException("Email cannot be null or blank");
         }
@@ -68,7 +72,8 @@ public final class Email {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Email other)) return false;
+        if (!(o instanceof Email)) return false;
+        Email other = (Email) o;
         return local.equals(other.local) && domain.equals(other.domain);
     }
 

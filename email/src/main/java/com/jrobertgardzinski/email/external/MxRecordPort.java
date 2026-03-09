@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.external;
+package com.jrobertgardzinski.email.external;
 
 import com.jrobertgardzinski.email.domain.Email;
 

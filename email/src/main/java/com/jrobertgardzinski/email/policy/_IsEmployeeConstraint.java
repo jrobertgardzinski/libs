@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.policy;
+package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
 import com.jrobertgardzinski.util.Constraint;

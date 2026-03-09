@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.policy;
+package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
 import com.jrobertgardzinski.util.Constraint;
@@ -20,6 +20,6 @@ class _DisposableEmailConstraint extends Constraint<Email> {
 
     @Override
     public String errorMessage() {
-        return "One of a disposable email domain: " + disposableDomains;
+        return "On the disposable domains list.";
     }
 }

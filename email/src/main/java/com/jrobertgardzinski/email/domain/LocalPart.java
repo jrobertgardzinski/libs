@@ -23,7 +23,8 @@ public final class LocalPart {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof LocalPart other)) return false;
+        if (!(o instanceof LocalPart)) return false;
+        LocalPart other = (LocalPart) o;
         return value.equals(other.value);
     }
 

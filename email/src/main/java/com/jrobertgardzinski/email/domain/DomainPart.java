@@ -32,7 +32,8 @@ public final class DomainPart {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DomainPart other)) return false;
+        if (!(o instanceof DomainPart)) return false;
+        DomainPart other = (DomainPart) o;
         return value.equals(other.value);
     }
 

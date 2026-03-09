@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.policy;
+package com.jrobertgardzinski.email.policy;
 
 import java.util.Collections;
 import java.util.List;
