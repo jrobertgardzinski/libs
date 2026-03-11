@@ -1,16 +1,65 @@
 package com.jrobertgardzinski.password.policy;
 
+import java.util.Objects;
+
 /**
- * Immutable configuration record for password policy.
+ * Immutable configuration class for password policy.
  * All defaults live in the Builder — one place to change them.
  */
-public record PasswordPolicyConfig(
-        int minLength,
-        boolean requireLowercase,
-        boolean requireUppercase,
-        boolean requireDigit,
-        String specialChars
-) {
+public final class PasswordPolicyConfig {
+    private final int minLength;
+    private final boolean requireLowercase;
+    private final boolean requireUppercase;
+    private final boolean requireDigit;
+    private final String specialChars;
+
+    public PasswordPolicyConfig(
+            int minLength,
+            boolean requireLowercase,
+            boolean requireUppercase,
+            boolean requireDigit,
+            String specialChars
+    ) {
+        this.minLength = minLength;
+        this.requireLowercase = requireLowercase;
+        this.requireUppercase = requireUppercase;
+        this.requireDigit = requireDigit;
+        this.specialChars = specialChars;
+    }
+
+    public int minLength() { return minLength; }
+    public boolean requireLowercase() { return requireLowercase; }
+    public boolean requireUppercase() { return requireUppercase; }
+    public boolean requireDigit() { return requireDigit; }
+    public String specialChars() { return specialChars; }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PasswordPolicyConfig that = (PasswordPolicyConfig) o;
+        return minLength == that.minLength && 
+                requireLowercase == that.requireLowercase && 
+                requireUppercase == that.requireUppercase && 
+                requireDigit == that.requireDigit && 
+                Objects.equals(specialChars, that.specialChars);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(minLength, requireLowercase, requireUppercase, requireDigit, specialChars);
+    }
+
+    @Override
+    public String toString() {
+        return "PasswordPolicyConfig[" +
+                "minLength=" + minLength +
+                ", requireLowercase=" + requireLowercase +
+                ", requireUppercase=" + requireUppercase +
+                ", requireDigit=" + requireDigit +
+                ", specialChars='" + specialChars + '\'' +
+                ']';
+    }
 
     public static Builder builder() {
         return new Builder();

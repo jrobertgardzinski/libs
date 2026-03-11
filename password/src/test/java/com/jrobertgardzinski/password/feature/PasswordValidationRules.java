@@ -41,6 +41,6 @@ public class PasswordValidationRules {
     public void thePasswordIsRejectedWithAnErrorContaining(String fragment) {
         assertNotNull(rejected, "Expected password to be rejected but it was accepted");
         assertTrue(rejected.getMessage().contains(fragment),
-                "Expected error to contain '%s' but was: %s".formatted(fragment, rejected.getMessage()));
+                String.format("Expected error to contain '%s' but was: %s", fragment, rejected.getMessage()));
     }
 }

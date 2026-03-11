@@ -3,12 +3,12 @@ package com.jrobertgardzinski.util;
 public abstract class Constraint<T> implements Specification<T> {
 
     public abstract boolean isSatisfied(T candidate);
-    public abstract String errorMessage();
+    public abstract String code();
 
     public ValidationResult validate(T candidate) {
         return isSatisfied(candidate) ?
                     ValidationResult.ok() :
-                    ValidationResult.failure(errorMessage());
+                    ValidationResult.failure(code());
     }
 
     @Override

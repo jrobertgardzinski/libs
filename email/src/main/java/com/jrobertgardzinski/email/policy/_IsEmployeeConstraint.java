@@ -19,7 +19,7 @@ class _IsEmployeeConstraint extends Constraint<Email> {
     }
 
     @Override
-    public String errorMessage() {
-        return "email domain is not a company domain";
+    public String code() {
+        return "NOT_A_COMPANY_DOMAIN";
     }
 }

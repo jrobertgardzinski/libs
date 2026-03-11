@@ -20,6 +20,6 @@ public class ContainsSpecialCharSpecification implements PasswordSpecification {
     public Optional<String> check(PlaintextPassword password) {
         return pattern.matcher(password.value()).find()
                 ? Optional.empty()
-                : Optional.of("must contain one of the special characters: [%s]".formatted(specialChars));
+                : Optional.of(String.format("must contain one of the special characters: [%s]", specialChars));
     }
 }

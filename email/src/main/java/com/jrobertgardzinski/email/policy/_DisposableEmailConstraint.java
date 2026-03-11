@@ -19,7 +19,7 @@ class _DisposableEmailConstraint extends Constraint<Email> {
     }
 
     @Override
-    public String errorMessage() {
-        return "On the disposable domains list.";
+    public String code() {
+        return "DISPOSABLE_DOMAIN";
     }
 }

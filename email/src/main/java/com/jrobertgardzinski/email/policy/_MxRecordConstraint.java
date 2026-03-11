@@ -18,7 +18,7 @@ class _MxRecordConstraint extends Constraint<Email> {
     }
 
     @Override
-    public String errorMessage() {
-        return "no MX record";
+    public String code() {
+        return "NO_MX_RECORD";
     }
 }

@@ -22,7 +22,7 @@ public class EmailValidationCompositionSteps {
     public void aConstraintThatFailsWith(String message) {
         constraints.add(new Constraint<Email>() {
             @Override public boolean isSatisfied(Email email) { return false; }
-            @Override public String errorMessage() { return message; }
+            @Override public String code() { return message; }
         });
     }
 
@@ -31,7 +31,7 @@ public class EmailValidationCompositionSteps {
     public void aConstraintThatPasses() {
         constraints.add(new Constraint<Email>() {
             @Override public boolean isSatisfied(Email email) { return true; }
-            @Override public String errorMessage() { return ""; }
+            @Override public String code() { return ""; }
         });
     }
 
@@ -39,17 +39,18 @@ public class EmailValidationCompositionSteps {
     public void theyAreCombinedAndValidatedAgainstAnEmail() {
         Email email = Email.of("test@example.com");
         
-        // Zbieramy błędy ze wszystkich reguł ręcznie, co symuluje działanie Validate.throwOnErrors
+        // Manually collect errors from all rules, simulating Validate.throwOnErrors
         List<String> allViolations = constraints.stream()
                 .map(c -> c.validate(email))
                 .flatMap(r -> r.violations().stream())
                 .collect(Collectors.toList());
-        
+
         if (allViolations.isEmpty()) {
             result = ValidationResult.ok();
         } else {
-            // Składamy błędy w jeden ValidationResult
+            // Combine errors into a single ValidationResult
             result = allViolations.stream()
+
                     .map(ValidationResult::failure)
                     .reduce(ValidationResult.ok(), ValidationResult::and);
         }
@@ -63,6 +64,12 @@ public class EmailValidationCompositionSteps {
     @Then("validation should succeed")
     public void validationShouldSucceed() {
         assertTrue(result.isValid(), "Validation should have succeeded");
+    }
+
+    @And("it should have {int} violations")
+    public void itShouldHaveViolations(int count) {
+        assertEquals(count, result.violations().size(), 
+                "Expected " + count + " violations, but found: " + result.violations());
     }
 
     @And("it should contain the violation {string}")

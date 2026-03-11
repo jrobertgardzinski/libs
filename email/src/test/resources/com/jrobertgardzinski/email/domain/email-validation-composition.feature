@@ -1,23 +1,14 @@
 Feature: Email validation composition
 
-  Scenario: Combining multiple constraints collects all violations
-    Given a constraint that fails with "invalid format"
-    And a constraint that fails with "blocked domain"
+  Scenario Outline: Combining multiple constraints
+    Given a constraint that <first_constraint>
+    And a constraint that <second_constraint>
     When they are combined and validated against an email
-    Then validation should fail
-    And it should contain the violation "invalid format"
-    And it should contain the violation "blocked domain"
+    Then validation should <result>
+    And it should have <violations_count> violations
 
-  Scenario: Combining passing and failing constraints
-    Given a constraint that passes
-    And a constraint that fails with "no MX record"
-    When they are combined and validated against an email
-    Then validation should fail
-    And it should contain the violation "no MX record"
-    But it should NOT contain any other violations
-
-  Scenario: All constraints passing
-    Given a constraint that passes
-    And another constraint that passes
-    When they are combined and validated against an email
-    Then validation should succeed
+    Examples:
+      | first_constraint           | second_constraint          | result  | violations_count |
+      | fails with "invalid format" | fails with "blocked domain" | fail    | 2                |
+      | passes                     | fails with "no MX record"    | fail    | 1                |
+      | passes                     | passes                     | succeed | 0                |

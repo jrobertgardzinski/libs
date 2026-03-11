@@ -20,7 +20,7 @@ class _RfcFormatConstraint extends Constraint<Email> {
     }
 
     @Override
-    public String errorMessage() {
-        return "email does not meet the RFC regex";
+    public String code() {
+        return "RFC_FORMAT_INVALID";
     }
 }

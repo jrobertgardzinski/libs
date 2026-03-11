@@ -19,7 +19,7 @@ class _BlockedDomainConstraint extends Constraint<Email> {
     }
 
     @Override
-    public String errorMessage() {
-        return "On the blocked domain list.";
+    public String code() {
+        return "DOMAIN_BLOCKED";
     }
 }

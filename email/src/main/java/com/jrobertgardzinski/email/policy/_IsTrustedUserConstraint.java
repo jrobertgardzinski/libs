@@ -22,7 +22,7 @@ class _IsTrustedUserConstraint extends Constraint<Email> {
     }
 
     @Override
-    public String errorMessage() {
-        return "email is not from a trusted source";
+    public String code() {
+        return "NOT_TRUSTED";
     }
 }

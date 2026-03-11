@@ -19,7 +19,7 @@ public class MinLengthSpecification implements PasswordSpecification {
     @Override
     public Optional<String> check(PlaintextPassword password) {
         return password.value().length() < minLength
-                ? Optional.of("must be at least %d characters long".formatted(minLength))
+                ? Optional.of(String.format("must be at least %d characters long", minLength))
                 : Optional.empty();
     }
 }

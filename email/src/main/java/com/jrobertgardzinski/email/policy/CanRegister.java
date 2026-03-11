@@ -3,60 +3,65 @@ package com.jrobertgardzinski.email.policy;
 import com.jrobertgardzinski.email.domain.Email;
 import com.jrobertgardzinski.email.external.MxRecordPort;
 import com.jrobertgardzinski.util.Constraint;
-import com.jrobertgardzinski.util.Validate;
+import com.jrobertgardzinski.util.ConstraintResult;
+import com.jrobertgardzinski.util.Decision;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-public class CanRegister implements Consumer<Email> {
+public class CanRegister {
 
-    private final List<Constraint<Email>> constraints;
+    private final _RegistrationEvaluator evaluator;
 
-    private CanRegister(Builder builder) {
-        this.constraints = List.copyOf(builder.constraints);
+    private CanRegister(
+            List<Constraint<Email>> blockingConstraints,
+            List<Constraint<Email>> warningConstraints,
+            Consumer<List<ConstraintResult>> warningHandler) {
+        this.evaluator = new _RegistrationEvaluator(blockingConstraints, warningConstraints, warningHandler);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public RegistrationDecision evaluate(Email email) {
+        var blockingViolations = evaluator.evaluateBlocking(email);
+        if (!blockingViolations.isEmpty()) {
+            return new RegistrationDecision(Decision.REJECTED, blockingViolations);
+        }
+
+        evaluator.fireWarningsAsync(email);
+
+        return new RegistrationDecision(Decision.ALLOWED, List.of());
     }
 
-    public static class Builder {
-
-        private final List<Constraint<Email>> constraints = new LinkedList<>();
-
-        private Builder() {
-            constraints.add(new _RfcFormatConstraint());
-        }
-
-        public Builder blockDisposable(Set<String> disposableDomains) {
-            constraints.add(new _DisposableEmailConstraint(disposableDomains));
-            return this;
-        }
-
-        public Builder blockDomains(Set<String> blockedDomains) {
-            constraints.add(new _BlockedDomainConstraint(blockedDomains));
-            return this;
-        }
-
-        public Builder requireCompanyDomain(Set<String> companyDomains) {
-            constraints.add(new _IsEmployeeConstraint(companyDomains));
-            return this;
-        }
-
-        public Builder requireMxRecord(MxRecordPort mxRecordPort) {
-            constraints.add(new _MxRecordConstraint(mxRecordPort));
-            return this;
-        }
-
-        public CanRegister build() {
-            return new CanRegister(this);
-        }
+    public static CanRegister minimalistic() {
+        return new CanRegister(
+                List.of(new _RfcFormatConstraint()),
+                List.of(),
+                null);
     }
 
-    @Override
-    public void accept(Email email) {
-        Validate.throwOnErrors(email, constraints, CannotBeRegisteredException::new);
+    public static CanRegister maximalistic(
+            Set<String> disposableDomains,
+            Set<String> blockedDomains,
+            Set<String> companyDomains,
+            MxRecordPort mxRecordPort,
+            Consumer<List<ConstraintResult>> warningHandler) {
+        return new CanRegister(
+                List.of(
+                        new _RfcFormatConstraint(),
+                        new _DisposableEmailConstraint(disposableDomains),
+                        new _BlockedDomainConstraint(blockedDomains),
+                        new _IsEmployeeConstraint(companyDomains)),
+                List.of(new _MxRecordConstraint(mxRecordPort)),
+                warningHandler);
+    }
+
+    public static CanRegister custom(
+            List<Constraint<Email>> blockingConstraints,
+            List<Constraint<Email>> warningConstraints,
+            Consumer<List<ConstraintResult>> warningHandler) {
+        return new CanRegister(
+                List.copyOf(blockingConstraints),
+                List.copyOf(warningConstraints),
+                warningHandler);
     }
 }

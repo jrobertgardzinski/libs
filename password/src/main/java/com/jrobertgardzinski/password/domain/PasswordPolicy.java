@@ -2,6 +2,7 @@ package com.jrobertgardzinski.password.domain;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Aggregates password specifications and validates a plaintext password against them.
@@ -14,7 +15,7 @@ public interface PasswordPolicy {
     default List<String> validate(PlaintextPassword password) {
         return specifications().stream()
                 .map(spec -> spec.check(password))
-                .flatMap(Optional::stream)
-                .toList();
+                .flatMap(s -> s.isPresent() ? java.util.stream.Stream.of(s.get()) : java.util.stream.Stream.empty())
+                .collect(Collectors.toList());
     }
 }

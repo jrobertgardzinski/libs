@@ -33,7 +33,8 @@ public final class PlaintextPassword {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PlaintextPassword other)) return false;
+        if (!(o instanceof PlaintextPassword)) return false;
+        PlaintextPassword other = (PlaintextPassword) o;
         return Objects.equals(value, other.value);
     }
 
