@@ -9,5 +9,6 @@
         <version>${revision}</version>
     </parent>
     <artifactId>lib-util</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 </project>

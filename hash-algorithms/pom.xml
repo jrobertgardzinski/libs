@@ -9,6 +9,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>hash-algorithms</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>

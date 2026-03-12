@@ -23,6 +23,7 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <email.version>1.5.0-SNAPSHOT</email.version>
     </properties>
 
     <dependencyManagement>
@@ -30,30 +31,35 @@
             <!-- internal -->
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
-                <artifactId>email</artifactId>
-                <version>${project.version}</version>
+                <artifactId>email-domain</artifactId>
+                <version>${email.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jrobertgardzinski</groupId>
+                <artifactId>email-application-security</artifactId>
+                <version>${email.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
                 <artifactId>password</artifactId>
-                <version>${project.version}</version>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
                 <artifactId>token</artifactId>
-                <version>${project.version}</version>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
                 <artifactId>argon2</artifactId>
-                <version>${project.version}</version>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
                 <artifactId>lib-util</artifactId>
-                <version>${project.version}</version>
+                <version>1.0-SNAPSHOT</version>
             </dependency>
 
             <!-- external -->

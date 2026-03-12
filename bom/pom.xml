@@ -9,6 +9,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>libs-bom</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <dependencyManagement>
