@@ -3,20 +3,15 @@ package com.jrobertgardzinski.email.policy;
 import com.jrobertgardzinski.email.domain.Email;
 import com.jrobertgardzinski.email.external.MxRecordPort;
 import com.jrobertgardzinski.util.constraint.ConstraintResult;
-import com.jrobertgardzinski.util.constraint.ErrorConstraint;
-import com.jrobertgardzinski.util.constraint.WarningConstraint;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +22,7 @@ public class EmailPolicySteps {
     private final Set<String> blockedDomains = new HashSet<>();
     private final Set<String> companyDomains = new HashSet<>();
     private final Set<String> noMxDomains = new HashSet<>();
-    private final List<ConstraintResult> capturedWarnings = new ArrayList<>();
+    private final java.util.List<ConstraintResult> capturedWarnings = new ArrayList<>();
     private CountDownLatch warningLatch;
     private RegistrationDecision registrationDecision;
     private PasswordResetDecision passwordResetDecision;
@@ -70,42 +65,45 @@ public class EmailPolicySteps {
 
     @When("registration eligibility is evaluated")
     public void registrationEligibilityIsEvaluated() {
-        registrationDecision = CanRegister.minimalistic().evaluate(email);
+        CanRegister.create(Set.of(), Set.of(), Set.of(), e -> true)
+                .evaluate(email, event -> {
+                    if (event instanceof PolicyEvent.Outcome<?> d)
+                        registrationDecision = (RegistrationDecision) d.value();
+                });
     }
 
     @When("registration eligibility is evaluated with active constraints")
     public void registrationEligibilityIsEvaluatedWithActiveConstraints() {
-        List<ErrorConstraint<Email>> blocking = new ArrayList<>();
-        blocking.add(new _RfcFormatConstraint());
-        if (!disposableDomains.isEmpty()) blocking.add(new _DisposableEmailConstraint(disposableDomains));
-        if (!blockedDomains.isEmpty()) blocking.add(new _BlockedDomainConstraint(blockedDomains));
-        if (!companyDomains.isEmpty()) blocking.add(new _IsEmployeeConstraint(companyDomains));
+        MxRecordPort mxPort = e -> !noMxDomains.contains(e.domain().value());
+        if (!noMxDomains.isEmpty()) warningLatch = new CountDownLatch(1);
 
-        List<WarningConstraint<Email>> warnings = new ArrayList<>();
-        Consumer<List<ConstraintResult>> warningHandler = null;
-        if (!noMxDomains.isEmpty()) {
-            MxRecordPort mxPort = e -> !noMxDomains.contains(e.domain().value());
-            warnings.add(new _MxRecordConstraint(mxPort));
-            warningLatch = new CountDownLatch(1);
-            warningHandler = received -> {
-                capturedWarnings.addAll(received);
-                warningLatch.countDown();
-            };
-        }
-
-        registrationDecision = CanRegister.custom(blocking, warnings, warningHandler).evaluate(email);
+        CanRegister.create(disposableDomains, blockedDomains, companyDomains, mxPort)
+                .evaluate(email, event -> {
+                    if (event instanceof PolicyEvent.Outcome<?> d)
+                        registrationDecision = (RegistrationDecision) d.value();
+                    if (event instanceof PolicyEvent.Warning<?> w) {
+                        capturedWarnings.add(w.result());
+                        if (warningLatch != null) warningLatch.countDown();
+                    }
+                });
     }
 
     @When("password reset eligibility is evaluated")
     public void passwordResetEligibilityIsEvaluated() {
-        passwordResetDecision = CanResetPassword.minimalistic().evaluate(email);
+        CanResetPassword.create(Set.of())
+                .evaluate(email, event -> {
+                    if (event instanceof PolicyEvent.Outcome<?> d)
+                        passwordResetDecision = (PasswordResetDecision) d.value();
+                });
     }
 
     @When("password reset eligibility is evaluated with extended checks")
     public void passwordResetEligibilityIsEvaluatedWithExtendedChecks() {
-        List<ErrorConstraint<Email>> blocking = new ArrayList<>();
-        if (!blockedDomains.isEmpty()) blocking.add(new _BlockedDomainConstraint(blockedDomains));
-        passwordResetDecision = CanResetPassword.custom(blocking, List.of(), null).evaluate(email);
+        CanResetPassword.create(blockedDomains)
+                .evaluate(email, event -> {
+                    if (event instanceof PolicyEvent.Outcome<?> d)
+                        passwordResetDecision = (PasswordResetDecision) d.value();
+                });
     }
 
     @Then("registration is allowed")
