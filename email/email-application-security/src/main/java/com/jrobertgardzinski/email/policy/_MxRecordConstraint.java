@@ -2,9 +2,9 @@ package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
 import com.jrobertgardzinski.email.external.MxRecordPort;
-import com.jrobertgardzinski.util.Constraint;
+import com.jrobertgardzinski.util.constraint.WarningConstraint;
 
-class _MxRecordConstraint extends Constraint<Email> {
+class _MxRecordConstraint extends WarningConstraint<Email> {
 
     private final MxRecordPort mxRecordPort;
 

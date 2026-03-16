@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.util;
+package com.jrobertgardzinski.util.constraint;
 
 import java.util.LinkedList;
 import java.util.List;

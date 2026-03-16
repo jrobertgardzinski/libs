@@ -1,9 +1,10 @@
 package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
-import com.jrobertgardzinski.util.Constraint;
-import com.jrobertgardzinski.util.ConstraintResult;
-import com.jrobertgardzinski.util.Decision;
+import com.jrobertgardzinski.util.constraint.ConstraintResult;
+import com.jrobertgardzinski.util.constraint.ErrorConstraint;
+import com.jrobertgardzinski.util.constraint.Severity;
+import com.jrobertgardzinski.util.constraint.WarningConstraint;
 
 import java.util.List;
 import java.util.Set;
@@ -11,24 +12,40 @@ import java.util.function.Consumer;
 
 public class CanResetPassword {
 
-    private final _PasswordResetEvaluator evaluator;
+    private final List<ErrorConstraint<Email>> blockingConstraints;
+    private final List<WarningConstraint<Email>> warningConstraints;
+    private final Consumer<List<ConstraintResult>> warningHandler;
 
     private CanResetPassword(
-            List<Constraint<Email>> blockingConstraints,
-            List<Constraint<Email>> warningConstraints,
+            List<ErrorConstraint<Email>> blockingConstraints,
+            List<WarningConstraint<Email>> warningConstraints,
             Consumer<List<ConstraintResult>> warningHandler) {
-        this.evaluator = new _PasswordResetEvaluator(blockingConstraints, warningConstraints, warningHandler);
+        this.blockingConstraints = blockingConstraints;
+        this.warningConstraints = warningConstraints;
+        this.warningHandler = warningHandler;
     }
 
     public PasswordResetDecision evaluate(Email email) {
-        var blockingViolations = evaluator.evaluateBlocking(email);
-        if (!blockingViolations.isEmpty()) {
-            return new PasswordResetDecision(Decision.REJECTED, blockingViolations);
+        var violations = blockingConstraints.stream()
+                .filter(c -> !c.isSatisfied(email))
+                .map(c -> new ConstraintResult(Severity.BLOCKING, c.code()))
+                .toList();
+        if (!violations.isEmpty()) {
+            return PasswordResetDecision.rejected(violations);
         }
+        fireWarningsAsync(email);
+        return PasswordResetDecision.allowed();
+    }
 
-        evaluator.fireWarningsAsync(email);
-
-        return new PasswordResetDecision(Decision.ALLOWED, List.of());
+    private void fireWarningsAsync(Email email) {
+        if (warningConstraints.isEmpty() || warningHandler == null) return;
+        Thread.startVirtualThread(() -> {
+            var warnings = warningConstraints.stream()
+                    .filter(c -> !c.isSatisfied(email))
+                    .map(c -> new ConstraintResult(Severity.WARNING, c.code()))
+                    .toList();
+            if (!warnings.isEmpty()) warningHandler.accept(warnings);
+        });
     }
 
     public static CanResetPassword minimalistic() {
@@ -50,8 +67,8 @@ public class CanResetPassword {
     }
 
     public static CanResetPassword custom(
-            List<Constraint<Email>> blockingConstraints,
-            List<Constraint<Email>> warningConstraints,
+            List<ErrorConstraint<Email>> blockingConstraints,
+            List<WarningConstraint<Email>> warningConstraints,
             Consumer<List<ConstraintResult>> warningHandler) {
         return new CanResetPassword(
                 List.copyOf(blockingConstraints),

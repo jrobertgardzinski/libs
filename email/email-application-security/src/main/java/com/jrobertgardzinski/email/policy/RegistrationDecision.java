@@ -1,16 +1,17 @@
 package com.jrobertgardzinski.email.policy;
 
-import com.jrobertgardzinski.util.ConstraintResult;
-import com.jrobertgardzinski.util.Decision;
+import com.jrobertgardzinski.util.constraint.ConstraintResult;
+import com.jrobertgardzinski.util.decision.Decision;
+
 import java.util.List;
 
-public record RegistrationDecision(Decision decision, List<ConstraintResult> violations) {
+public interface RegistrationDecision extends Decision {
 
-    public boolean isAllowed() {
-        return decision == Decision.ALLOWED;
+    static RegistrationDecision allowed() {
+        return new _RegistrationAllowed();
     }
 
-    public boolean isRejected() {
-        return decision == Decision.REJECTED;
+    static RegistrationDecision rejected(List<ConstraintResult> violations) {
+        return new _RegistrationRejected(violations);
     }
 }

@@ -2,9 +2,10 @@ package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
 import com.jrobertgardzinski.email.external.MxRecordPort;
-import com.jrobertgardzinski.util.Constraint;
-import com.jrobertgardzinski.util.ConstraintResult;
-import com.jrobertgardzinski.util.Decision;
+import com.jrobertgardzinski.util.constraint.ConstraintResult;
+import com.jrobertgardzinski.util.constraint.ErrorConstraint;
+import com.jrobertgardzinski.util.constraint.Severity;
+import com.jrobertgardzinski.util.constraint.WarningConstraint;
 
 import java.util.List;
 import java.util.Set;
@@ -12,24 +13,40 @@ import java.util.function.Consumer;
 
 public class CanRegister {
 
-    private final _RegistrationEvaluator evaluator;
+    private final List<ErrorConstraint<Email>> blockingConstraints;
+    private final List<WarningConstraint<Email>> warningConstraints;
+    private final Consumer<List<ConstraintResult>> warningHandler;
 
     private CanRegister(
-            List<Constraint<Email>> blockingConstraints,
-            List<Constraint<Email>> warningConstraints,
+            List<ErrorConstraint<Email>> blockingConstraints,
+            List<WarningConstraint<Email>> warningConstraints,
             Consumer<List<ConstraintResult>> warningHandler) {
-        this.evaluator = new _RegistrationEvaluator(blockingConstraints, warningConstraints, warningHandler);
+        this.blockingConstraints = blockingConstraints;
+        this.warningConstraints = warningConstraints;
+        this.warningHandler = warningHandler;
     }
 
     public RegistrationDecision evaluate(Email email) {
-        var blockingViolations = evaluator.evaluateBlocking(email);
-        if (!blockingViolations.isEmpty()) {
-            return new RegistrationDecision(Decision.REJECTED, blockingViolations);
+        var violations = blockingConstraints.stream()
+                .filter(c -> !c.isSatisfied(email))
+                .map(c -> new ConstraintResult(Severity.BLOCKING, c.code()))
+                .toList();
+        if (!violations.isEmpty()) {
+            return RegistrationDecision.rejected(violations);
         }
+        fireWarningsAsync(email);
+        return RegistrationDecision.allowed();
+    }
 
-        evaluator.fireWarningsAsync(email);
-
-        return new RegistrationDecision(Decision.ALLOWED, List.of());
+    private void fireWarningsAsync(Email email) {
+        if (warningConstraints.isEmpty() || warningHandler == null) return;
+        Thread.startVirtualThread(() -> {
+            var warnings = warningConstraints.stream()
+                    .filter(c -> !c.isSatisfied(email))
+                    .map(c -> new ConstraintResult(Severity.WARNING, c.code()))
+                    .toList();
+            if (!warnings.isEmpty()) warningHandler.accept(warnings);
+        });
     }
 
     public static CanRegister minimalistic() {
@@ -56,8 +73,8 @@ public class CanRegister {
     }
 
     public static CanRegister custom(
-            List<Constraint<Email>> blockingConstraints,
-            List<Constraint<Email>> warningConstraints,
+            List<ErrorConstraint<Email>> blockingConstraints,
+            List<WarningConstraint<Email>> warningConstraints,
             Consumer<List<ConstraintResult>> warningHandler) {
         return new CanRegister(
                 List.copyOf(blockingConstraints),

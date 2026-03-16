@@ -1,17 +1,17 @@
 package com.jrobertgardzinski.email.policy;
 
-import com.jrobertgardzinski.util.ConstraintResult;
-import com.jrobertgardzinski.util.Decision;
+import com.jrobertgardzinski.util.constraint.ConstraintResult;
+import com.jrobertgardzinski.util.decision.Decision;
 
 import java.util.List;
 
-public record PasswordResetDecision(Decision decision, List<ConstraintResult> violations) {
+public interface PasswordResetDecision extends Decision {
 
-    public boolean isAllowed() {
-        return decision == Decision.ALLOWED;
+    static PasswordResetDecision allowed() {
+        return new _PasswordResetAllowed();
     }
 
-    public boolean isRejected() {
-        return decision == Decision.REJECTED;
+    static PasswordResetDecision rejected(List<ConstraintResult> violations) {
+        return new _PasswordResetRejected(violations);
     }
 }

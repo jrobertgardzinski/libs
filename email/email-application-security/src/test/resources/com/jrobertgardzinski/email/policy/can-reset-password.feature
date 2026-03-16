@@ -12,6 +12,6 @@ Feature: Password reset eligibility
 
   Scenario: Email from a blacklisted domain cannot request a password reset
     Given a valid email "user@spammer.com"
-    And "spammer.com" is a blacklisted domain
+    And "spammer.com" is a "blacklisted" domain
     When password reset eligibility is evaluated with extended checks
     Then password reset is rejected with violation "DOMAIN_BLOCKED"

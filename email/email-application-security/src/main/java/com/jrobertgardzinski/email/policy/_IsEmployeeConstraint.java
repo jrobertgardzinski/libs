@@ -1,11 +1,11 @@
 package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
-import com.jrobertgardzinski.util.Constraint;
+import com.jrobertgardzinski.util.constraint.ErrorConstraint;
 
 import java.util.Set;
 
-class _IsEmployeeConstraint extends Constraint<Email> {
+class _IsEmployeeConstraint extends ErrorConstraint<Email> {
 
     private final Set<String> companyDomains;
 

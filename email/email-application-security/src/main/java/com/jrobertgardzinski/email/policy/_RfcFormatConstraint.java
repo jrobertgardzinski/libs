@@ -1,11 +1,11 @@
 package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
-import com.jrobertgardzinski.util.Constraint;
+import com.jrobertgardzinski.util.constraint.ErrorConstraint;
 
 import java.util.regex.Pattern;
 
-class _RfcFormatConstraint extends Constraint<Email> {
+class _RfcFormatConstraint extends ErrorConstraint<Email> {
 
     private static final Pattern RFC_PATTERN = Pattern.compile(
             "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+" +

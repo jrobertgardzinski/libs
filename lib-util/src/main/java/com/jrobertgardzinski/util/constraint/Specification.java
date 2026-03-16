@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.util;
+package com.jrobertgardzinski.util.constraint;
 
 public interface Specification<T> {
 
