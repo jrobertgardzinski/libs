@@ -1,31 +1,39 @@
 package com.jrobertgardzinski.email.policy;
 
 import com.jrobertgardzinski.email.domain.Email;
+import com.jrobertgardzinski.util.constraint.Constraint;
+import com.jrobertgardzinski.util.constraint.ErrorConstraint;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class CanResetPassword {
 
-    private final _FastPhase<Email> fastPhase;
-    private final _WarningPhase<Email> warningPhase;
+    private final List<ErrorConstraint<Email>> errorConstraints;
 
-    private CanResetPassword(_FastPhase<Email> fastPhase, _WarningPhase<Email> warningPhase) {
-        this.fastPhase = fastPhase;
-        this.warningPhase = warningPhase;
+    public CanResetPassword(Set<String> blockedDomains) {
+        this.errorConstraints = List.of(
+                new _RfcFormatConstraint(),
+                new _BlockedDomainConstraint(blockedDomains)
+        );
     }
 
-    public void evaluate(Email email, Consumer<PolicyEvent<PasswordResetDecision>> observer) {
-        _EvaluatePolicy.run(email, fastPhase, warningPhase,
-                PasswordResetDecision::allowed, PasswordResetDecision::rejected, observer);
+    public Decision evaluate(Email email) {
+        List<String> codes = errorConstraints.stream()
+                .filter(el -> !el.isSatisfied(email))
+                .map(Constraint::code)
+                .toList();
+        return codes.isEmpty() ?
+                new Decision.Allowed() :
+                new Decision.Rejected(codes);
     }
 
-    public static CanResetPassword create(Set<String> blockedDomains) {
-        return new CanResetPassword(
-                new _FastPhase<>(List.of(
-                        new _RfcFormatConstraint(),
-                        new _BlockedDomainConstraint(blockedDomains))),
-                new _WarningPhase<>(List.of()));
+    public interface Decision {
+        record Rejected(
+                List<String> errorCodes) implements Decision {
+        }
+
+        record Allowed() implements Decision {}
     }
+
 }
