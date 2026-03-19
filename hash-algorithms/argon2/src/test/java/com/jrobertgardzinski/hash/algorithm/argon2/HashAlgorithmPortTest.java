@@ -3,8 +3,6 @@ package com.jrobertgardzinski.hash.algorithm.argon2;
 import com.jrobertgardzinski.password.domain.HashAlgorithmPort;
 import com.jrobertgardzinski.password.domain.PasswordHash;
 import com.jrobertgardzinski.password.domain.PlaintextPassword;
-import com.jrobertgardzinski.password.factory.PasswordFactory;
-import com.jrobertgardzinski.password.policy.PasswordPolicyAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,22 +13,20 @@ public abstract class HashAlgorithmPortTest {
 
     protected abstract HashAlgorithmPort hashAlgorithm();
 
-    private final PasswordFactory passwordFactory = new PasswordFactory(new PasswordPolicyAdapter());
     private PasswordHash hash;
 
     @BeforeEach
     void init() {
-        PlaintextPassword password = passwordFactory.create("StrongPassword1!");
-        hash = hashAlgorithm().hash(password);
+        hash = hashAlgorithm().hash(PlaintextPassword.of("StrongPassword1!"));
     }
 
     @Test
     void correctPasswordVerifies() {
-        assertTrue(hashAlgorithm().verify(hash, passwordFactory.create("StrongPassword1!")));
+        assertTrue(hashAlgorithm().verify(hash, PlaintextPassword.of("StrongPassword1!")));
     }
 
     @Test
     void wrongPasswordDoesNotVerify() {
-        assertFalse(hashAlgorithm().verify(hash, passwordFactory.create("StrongPassword2!")));
+        assertFalse(hashAlgorithm().verify(hash, PlaintextPassword.of("StrongPassword2!")));
     }
 }

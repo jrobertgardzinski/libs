@@ -4,11 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class PasswordPolicyConfigTest {
+class CanSetPasswordConfigTest {
 
     @Test
     void defaultsAreApplied() {
-        PasswordPolicyConfig config = PasswordPolicyConfig.builder().build();
+        CanSetPassword.Config config = CanSetPassword.Config.builder().build();
 
         assertEquals(12, config.minLength());
         assertTrue(config.requireLowercase());
@@ -19,7 +19,7 @@ class PasswordPolicyConfigTest {
 
     @Test
     void builderOverridesDefaults() {
-        PasswordPolicyConfig config = PasswordPolicyConfig.builder()
+        CanSetPassword.Config config = CanSetPassword.Config.builder()
                 .minLength(8)
                 .requireDigit(false)
                 .noSpecialChars()
