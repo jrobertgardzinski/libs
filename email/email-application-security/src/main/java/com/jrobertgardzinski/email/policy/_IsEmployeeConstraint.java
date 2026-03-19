@@ -15,7 +15,7 @@ class _IsEmployeeConstraint extends ErrorConstraint<Email> {
 
     @Override
     public boolean isSatisfied(Email candidate) {
-        return companyDomains.contains(candidate.domain().value());
+        return companyDomains.isEmpty() || companyDomains.contains(candidate.domain().value());
     }
 
     @Override
