@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.token.domain;
+package com.jrobertgardzinski.token.domain.token;
 
 /**
  * Short-lived access token issued after successful authentication.

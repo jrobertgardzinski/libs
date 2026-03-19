@@ -1,5 +1,8 @@
 package com.jrobertgardzinski.token.domain;
 
+import com.jrobertgardzinski.token.domain.token.Token;
+import com.jrobertgardzinski.token.domain.token.expiration.RefreshTokenExpiration;
+import com.jrobertgardzinski.token.domain.token.expiration.TokenExpiration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

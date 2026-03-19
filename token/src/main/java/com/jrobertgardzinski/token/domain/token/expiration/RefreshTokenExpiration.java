@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.token.domain;
+package com.jrobertgardzinski.token.domain.token.expiration;
 
 import java.time.Clock;
 import java.time.LocalDateTime;

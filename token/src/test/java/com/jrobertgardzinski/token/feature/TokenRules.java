@@ -1,6 +1,9 @@
 package com.jrobertgardzinski.token.feature;
 
-import com.jrobertgardzinski.token.domain.*;
+import com.jrobertgardzinski.token.domain.token.AccessToken;
+import com.jrobertgardzinski.token.domain.token.Token;
+import com.jrobertgardzinski.token.domain.token.expiration.RefreshTokenExpiration;
+import com.jrobertgardzinski.token.domain.token.expiration.TokenExpiration;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;

@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.token.domain;
+package com.jrobertgardzinski.token.domain.token;
 
 import java.util.UUID;
 

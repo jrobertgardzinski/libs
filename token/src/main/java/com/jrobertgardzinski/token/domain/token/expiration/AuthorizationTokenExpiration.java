@@ -1,4 +1,4 @@
-package com.jrobertgardzinski.token.domain;
+package com.jrobertgardzinski.token.domain.token.expiration;
 
 /**
  * Expiration of an authorization (access) token.
