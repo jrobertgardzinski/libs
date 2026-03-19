@@ -27,7 +27,12 @@
 
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
-                <artifactId>password</artifactId>
+                <artifactId>password-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jrobertgardzinski</groupId>
+                <artifactId>password-application-security</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

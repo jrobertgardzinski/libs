@@ -24,6 +24,7 @@
         <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <email.version>1.5.0-SNAPSHOT</email.version>
+        <password.version>1.0-SNAPSHOT</password.version>
     </properties>
 
     <dependencyManagement>
@@ -42,8 +43,13 @@
 
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>
-                <artifactId>password</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <artifactId>password-domain</artifactId>
+                <version>${password.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jrobertgardzinski</groupId>
+                <artifactId>password-application-security</artifactId>
+                <version>${password.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.jrobertgardzinski</groupId>

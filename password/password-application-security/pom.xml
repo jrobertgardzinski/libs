@@ -5,12 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jrobertgardzinski</groupId>
-        <artifactId>hash-algorithms</artifactId>
+        <artifactId>password</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>argon2</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>password-application-security</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -19,13 +18,8 @@
             <artifactId>password-domain</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.mkammerer</groupId>
-            <artifactId>argon2-jvm</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.jrobertgardzinski</groupId>
-            <artifactId>unit-test-starter</artifactId>
+            <artifactId>bdd-test-starter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
