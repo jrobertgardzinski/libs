@@ -1,21 +1,27 @@
 package com.jrobertgardzinski.password.factory;
 
-import com.jrobertgardzinski.password.domain.PasswordPolicy;
 import com.jrobertgardzinski.password.domain.PlaintextPassword;
+import com.jrobertgardzinski.password.policy.CanSetPassword;
+import com.jrobertgardzinski.password.policy.PasswordPolicyConfig;
 
-/**
- * Creates PlaintextPassword instances while enforcing the active policy.
- * Single entry point for producing PlaintextPassword objects in application code.
- */
 public class PasswordFactory {
 
-    private final PasswordPolicy policy;
+    private final CanSetPassword canSetPassword;
 
-    public PasswordFactory(PasswordPolicy policy) {
-        this.policy = policy;
+    public PasswordFactory() {
+        this.canSetPassword = new CanSetPassword();
+    }
+
+    public PasswordFactory(PasswordPolicyConfig config) {
+        this.canSetPassword = new CanSetPassword(config);
     }
 
     public PlaintextPassword create(String rawPassword) {
-        return PlaintextPassword.of(rawPassword, policy);
+        PlaintextPassword candidate = PlaintextPassword.of(rawPassword);
+        CanSetPassword.Decision decision = canSetPassword.evaluate(candidate);
+        if (decision instanceof CanSetPassword.Decision.Rejected rejected) {
+            throw new IllegalArgumentException(rejected.errorCodes().toString());
+        }
+        return candidate;
     }
 }

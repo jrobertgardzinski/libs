@@ -1,12 +1,10 @@
 package com.jrobertgardzinski.password.domain;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
  * Plaintext password value object.
- *
- * Enforces only that a policy is satisfied — the policy decides the rules.
+ * Enforces only that the value is not blank — strength rules live in CanSetPassword.
  * Never exposes the raw value in toString() to prevent accidental logging.
  */
 public final class PlaintextPassword {
@@ -17,13 +15,11 @@ public final class PlaintextPassword {
         this.value = value;
     }
 
-    public static PlaintextPassword of(String value, PasswordPolicy policy) {
-        PlaintextPassword candidate = new PlaintextPassword(value);
-        List<String> errors = policy.validate(candidate);
-        if (!errors.isEmpty()) {
-            throw new IllegalArgumentException(errors.toString());
+    public static PlaintextPassword of(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("Password must not be blank");
         }
-        return candidate;
+        return new PlaintextPassword(value);
     }
 
     public String value() {

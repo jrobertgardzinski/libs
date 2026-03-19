@@ -8,10 +8,10 @@ Feature: Password Validation
     Then the password is <result>
 
     Examples:
-      | password      | result                                              |
-      | Str0ng#Pass!  | accepted                                            |
-      | Sh0rt#        | rejected with an error containing "characters long" |
-      | str0ng#pass!  | rejected with an error containing "uppercase"       |
-      | Strong#Pass!  | rejected with an error containing "digit"           |
-      | Str0ngPass1   | rejected with an error containing "special"         |
-      | STR0NG#PASS!  | rejected with an error containing "lowercase"       |
+      | password     | result                                                    |
+      | Str0ng#Pass! | accepted                                                  |
+      | Sh0rt#       | rejected with an error containing "MIN_LENGTH_NOT_MET"    |
+      | str0ng#pass! | rejected with an error containing "UPPERCASE_REQUIRED"    |
+      | Strong#Pass! | rejected with an error containing "DIGIT_REQUIRED"        |
+      | Str0ngPass1  | rejected with an error containing "SPECIAL_CHAR_REQUIRED" |
+      | STR0NG#PASS! | rejected with an error containing "LOWERCASE_REQUIRED"    |
