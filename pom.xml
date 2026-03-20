@@ -11,9 +11,6 @@
 
     <modules>
         <module>lib-util</module>
-        <module>email</module>
-        <module>password</module>
-        <module>token</module>
         <module>hash-algorithms</module>
     </modules>
 
