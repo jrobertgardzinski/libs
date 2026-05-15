@@ -5,8 +5,8 @@ import java.util.List;
 /**
  * A set of constraints applied to a candidate of type {@code T}.
  *
- * Composed of error constraints (any failure rejects the candidate) and an
- * optional warning constraint (failure does not reject, but is reported).
+ * Composed of error constraints (any failure rejects the candidate) and
+ * optional warning constraints (failures do not reject, but are reported).
  *
  * Replaces the recurring {@code stream().filter(...).map(code).toList()}
  * pattern by giving the operation a name and a return type: {@link #decide(Object)}.
@@ -14,15 +14,15 @@ import java.util.List;
 public final class Constraints<T> {
 
     private final List<? extends ErrorConstraint<T>> errors;
-    private final WarningConstraint<T> warning;
+    private final List<? extends WarningConstraint<T>> warnings;
 
     public Constraints(List<? extends ErrorConstraint<T>> errors) {
-        this(errors, null);
+        this(errors, List.of());
     }
 
-    public Constraints(List<? extends ErrorConstraint<T>> errors, WarningConstraint<T> warning) {
+    public Constraints(List<? extends ErrorConstraint<T>> errors, List<? extends WarningConstraint<T>> warnings) {
         this.errors = List.copyOf(errors);
-        this.warning = warning;
+        this.warnings = List.copyOf(warnings);
     }
 
     public Decision decide(T candidate) {
@@ -34,8 +34,12 @@ public final class Constraints<T> {
         if (!failedCodes.isEmpty()) {
             return new Decision.Rejected(failedCodes);
         }
-        if (warning != null && !warning.isSatisfied(candidate)) {
-            return new Decision.AllowedWithWarning(warning.code());
+        List<String> warningCodes = warnings.stream()
+                .filter(w -> !w.isSatisfied(candidate))
+                .map(Constraint::code)
+                .toList();
+        if (!warningCodes.isEmpty()) {
+            return new Decision.AllowedWithWarning(warningCodes);
         }
         return new Decision.Allowed();
     }
