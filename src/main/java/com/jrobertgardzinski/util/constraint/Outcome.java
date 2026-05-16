@@ -37,11 +37,11 @@ public sealed interface Outcome<T> {
 
     record Rejected<T>(List<String> errorCodes) implements Outcome<T> {}
 
-    static <T> Outcome<T> from(Decision decision, Supplier<T> ifAllowed) {
+    static <T> Outcome<T> from(Decision<T> decision, Supplier<T> ifAllowed) {
         return switch (decision) {
-            case Decision.Allowed a -> new Allowed<>(ifAllowed.get());
-            case Decision.AllowedWithWarning w -> new AllowedWithWarning<>(ifAllowed.get(), w.warningCodes());
-            case Decision.Rejected r -> new Rejected<>(r.errorCodes());
+            case Decision.Allowed<T> a            -> new Allowed<>(ifAllowed.get());
+            case Decision.AllowedWithWarning<T> w -> new AllowedWithWarning<>(ifAllowed.get(), w.warningCodes());
+            case Decision.Rejected<T> r           -> new Rejected<>(r.errorCodes());
         };
     }
 }

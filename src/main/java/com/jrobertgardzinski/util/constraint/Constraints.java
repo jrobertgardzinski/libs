@@ -25,22 +25,22 @@ public final class Constraints<T> {
         this.warnings = List.copyOf(warnings);
     }
 
-    public Decision decide(T candidate) {
+    public Decision<T> decide(T candidate) {
         List<String> failedCodes = errors.stream()
                 .filter(c -> !c.isSatisfied(candidate))
                 .map(Constraint::code)
                 .toList();
 
         if (!failedCodes.isEmpty()) {
-            return new Decision.Rejected(failedCodes);
+            return new Decision.Rejected<>(failedCodes);
         }
         List<String> warningCodes = warnings.stream()
                 .filter(w -> !w.isSatisfied(candidate))
                 .map(Constraint::code)
                 .toList();
         if (!warningCodes.isEmpty()) {
-            return new Decision.AllowedWithWarning(warningCodes);
+            return new Decision.AllowedWithWarning<>(warningCodes);
         }
-        return new Decision.Allowed();
+        return new Decision.Allowed<>();
     }
 }
