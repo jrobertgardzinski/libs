@@ -1,5 +1,6 @@
 package com.jrobertgardzinski.util.constraint;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -26,13 +27,14 @@ public final class Constraints<T> {
         this.warnings = List.copyOf(warnings);
     }
 
-    public Decision<T> decide(Supplier<T> candidateSupplier) {
+    public Outcome<T> validate(Supplier<T> candidateSupplier) {
         T candidate;
         try {
             candidate = candidateSupplier.get();
         }
         catch (Exception e) {
-            return new Decision.RejectedDueToInvariantBreakage<>(e.getMessage());
+            return new Outcome.RejectedDueToInvariantBreakage<>(
+                    Collections.singletonList(e.getMessage()));
         }
 
         List<String> failedCodes = errors.stream()
@@ -41,15 +43,15 @@ public final class Constraints<T> {
                 .toList();
 
         if (!failedCodes.isEmpty()) {
-            return new Decision.Rejected<>(failedCodes);
+            return new Outcome.Rejected<>(failedCodes);
         }
         List<String> warningCodes = warnings.stream()
                 .filter(w -> !w.isSatisfied(candidate))
                 .map(Constraint::code)
                 .toList();
         if (!warningCodes.isEmpty()) {
-            return new Decision.AllowedWithWarning<>(warningCodes);
+            return new Outcome.AllowedWithWarning<>(candidate, warningCodes);
         }
-        return new Decision.Allowed<>();
+        return new Outcome.Allowed<>(candidate);
     }
 }
