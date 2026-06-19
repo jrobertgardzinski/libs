@@ -1,5 +1,6 @@
 package com.jrobertgardzinski.util.constraint;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -20,6 +21,7 @@ public sealed interface Outcome<T> {
         return switch (this) {
             case Outcome.Allowed<T> _, Outcome.AllowedWithWarning<T> _ -> List.of();
             case Outcome.Rejected<T> r -> r.errorCodes();
+            case Outcome.RejectedDueToInvariantBreakage<T> r -> r.errorCodes();
         };
     }
 
@@ -28,6 +30,8 @@ public sealed interface Outcome<T> {
             case Allowed<T> a            -> Optional.of(a.value());
             case AllowedWithWarning<T> w -> Optional.of(w.value());
             case Rejected<T> r           -> Optional.empty();
+            case RejectedDueToInvariantBreakage<T> r
+                                        -> Optional.empty();
         };
     }
 
@@ -37,11 +41,16 @@ public sealed interface Outcome<T> {
 
     record Rejected<T>(List<String> errorCodes) implements Outcome<T> {}
 
+    record RejectedDueToInvariantBreakage<T>(List<String> errorCodes) implements Outcome<T> {}
+
     static <T> Outcome<T> from(Decision<?> decision, Supplier<T> ifAllowed) {
         return switch (decision) {
             case Decision.Allowed<?> a            -> new Allowed<>(ifAllowed.get());
             case Decision.AllowedWithWarning<?> w -> new AllowedWithWarning<>(ifAllowed.get(), w.warningCodes());
             case Decision.Rejected<?> r           -> new Rejected<>(r.errorCodes());
+            case Decision.RejectedDueToInvariantBreakage<?> r ->
+                    new RejectedDueToInvariantBreakage<>(Collections.singletonList(r.details()));
+
         };
     }
 }

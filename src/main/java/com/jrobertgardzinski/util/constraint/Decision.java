@@ -1,5 +1,6 @@
 package com.jrobertgardzinski.util.constraint;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,11 +17,12 @@ import java.util.List;
  *   <li>{@link Rejected} — at least one error constraint failed; lists all failed codes.</li>
  * </ul>
  */
-public sealed interface Decision<T> permits Decision.Allowed, Decision.AllowedWithWarning, Decision.Rejected {
+public sealed interface Decision<T> permits Decision.Allowed, Decision.AllowedWithWarning, Decision.Rejected, Decision.RejectedDueToInvariantBreakage {
 
     default List<String> errorCodes() {
         return switch (this) {
             case Allowed<T> _, AllowedWithWarning<T> _ -> List.of();
+            case RejectedDueToInvariantBreakage<T> r -> Collections.singletonList(r.details());
             case Rejected<T> r -> r.errorCodes();
         };
     }
@@ -30,4 +32,6 @@ public sealed interface Decision<T> permits Decision.Allowed, Decision.AllowedWi
     record AllowedWithWarning<T>(List<String> warningCodes) implements Decision<T> {}
 
     record Rejected<T>(List<String> errorCodes) implements Decision<T> {}
+
+    record RejectedDueToInvariantBreakage<T>(String details) implements Decision<T> {}
 }

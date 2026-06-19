@@ -1,6 +1,7 @@
 package com.jrobertgardzinski.util.constraint;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * A set of constraints applied to a candidate of type {@code T}.
@@ -25,7 +26,15 @@ public final class Constraints<T> {
         this.warnings = List.copyOf(warnings);
     }
 
-    public Decision<T> decide(T candidate) {
+    public Decision<T> decide(Supplier<T> candidateSupplier) {
+        T candidate;
+        try {
+            candidate = candidateSupplier.get();
+        }
+        catch (Exception e) {
+            return new Decision.RejectedDueToInvariantBreakage<>(e.getMessage());
+        }
+
         List<String> failedCodes = errors.stream()
                 .filter(c -> !c.isSatisfied(candidate))
                 .map(Constraint::code)
