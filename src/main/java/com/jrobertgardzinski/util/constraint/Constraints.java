@@ -26,6 +26,8 @@ public final class Constraints<T> {
         this.warnings = List.copyOf(warnings);
     }
 
+
+
     /**
      * Builds the candidate, then judges it: error constraints first (any failure rejects), then
      * warnings (reported, never rejecting).
